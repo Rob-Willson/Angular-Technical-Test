@@ -1,40 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-
-// Parsed data output from crypto API endpoint
-export class RequestData {
-  constructor(
-    public Response: string,
-    public Message: string,
-    public HasWarning: boolean,
-    public Type: number,
-    public Data: Data
-  )
-  {}
-}
-export class Data {
-  constructor(
-    public Aggregated: boolean,
-    public TimeFrom: number,
-    public TimeTo: number,
-    public Data: Datum[]
-  )
-  {}
-}
-export class Datum {
-  constructor(
-    public time: number,
-    public high: number,
-    public low: number,
-    public open: number,
-    public volumefrom: number,
-    public volumeto: number,
-    public close: number,
-    public conversionType: string,
-    public conversionSymbol: string
-  )
-  {}
-}
+import { HttpService } from '../core/http.service';
 
 @Component({
   selector: 'app-option-b',
@@ -43,25 +8,27 @@ export class Datum {
 })
 
 export class OptionBComponent implements OnInit {
+  private readonly urlBase: string = "https://min-api.cryptocompare.com/data/v2/histoday";
+  private urlCurrencies: string[] = ["fsym=BTC", "tsym=USD"];
+  private urlCount: number = 5;
+  // TODO: API key?
   
-  // TODO: Why is this "undefined" assignment required?
-  requestData: RequestData | undefined;
-
-  constructor(private httpClient : HttpClient) { }
+  constructor(private httpService : HttpService) { }
 
   ngOnInit(): void {
-    console.log("init");
-    this.getRequest();
+    this.httpService.getRequest(this.buildUrl());
   }
 
-  getRequest() {
-    let url = 'https://min-api.cryptocompare.com/data/v2/histoday?fsym=BTC&tsym=USD&limit=10';
-    this.httpClient.get<any>(url).subscribe(
-      response => {
-        console.log(response);
-        this.requestData = response;
-      }
-    );
-  }
+  private buildUrl() : string {
+    let url : string = this.urlBase + "?";
 
+    this.urlCurrencies.forEach(currency => {
+      url += currency + "&"
+    })
+
+    // Cryptocompare API uses base 0 for it's counts, but most humans don't
+    url += "limit=" + (this.urlCount - 1);
+
+    return url;
+  }
 }
