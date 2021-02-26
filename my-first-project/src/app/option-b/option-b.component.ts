@@ -9,7 +9,8 @@ import { HttpService } from '../core/http.service';
 
 export class OptionBComponent implements OnInit {
   private readonly urlBase: string = "https://min-api.cryptocompare.com/data/v2/histoday";
-  private urlCurrencies: string[] = ["fsym=BTC", "tsym=USD"];
+  private urlCurrencyId: string = "BTC";
+  private urlCurrencyStandardId: string = "USD";
   private urlCount: number = 5;
   // TODO: API key?
   
@@ -21,14 +22,11 @@ export class OptionBComponent implements OnInit {
 
   private buildUrl() : string {
     let url : string = this.urlBase + "?";
-
-    this.urlCurrencies.forEach(currency => {
-      url += currency + "&"
-    })
-
+    // Request requires a querying currency (fsym) and a standard (tsym) to compare it with
+    url += "fsym=" + this.urlCurrencyId + "&";
+    url += "tsym=" + this.urlCurrencyStandardId;
     // Cryptocompare API uses base 0 for it's counts, but most humans don't
-    url += "limit=" + (this.urlCount - 1);
-
+    url += "&limit=" + (this.urlCount - 1);
     return url;
   }
 }
