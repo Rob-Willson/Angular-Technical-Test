@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../core/http.service';
 import { CryptoData } from '../core/data.template';
+import { Coin } from '../core/coin.template';
 import * as d3 from 'd3';
 import * as d3Scale from 'd3';
 import * as d3Shape from 'd3';
 import * as d3Array from 'd3';
 import * as d3Axis from 'd3';
-import { active } from 'd3';
 
 @Component({
   selector: 'app-chart',
@@ -21,17 +21,25 @@ export class ChartComponent implements OnInit {
   private urlCount: number = 5;
   // TODO: API key?
 
-  public coins: Coin[] = [
-    new Coin("BTC", true),
-    new Coin("ETH", false),
-    new Coin("LTC", false)
-  ];
-
   private svg;
   private margin = 50;
   private width = 600 - (this.margin * 2);
   private height = 400 - (this.margin * 2);
   
+  // All supported crytocurrencies with their default display values
+  public coins: Coin[] = [
+    new Coin("BTC", true),
+    new Coin("ETH", false),
+    new Coin("LTC", false),
+    new Coin("ADA", false),
+    new Coin("DOT", false),
+    new Coin("BCH", false),
+    new Coin("XLM", false),
+    new Coin("BNB", false),
+    new Coin("USDT", false),
+    new Coin("XMR", false),
+  ];
+
   constructor(private httpService : HttpService) { }
 
   ngOnInit(): void {
@@ -49,20 +57,20 @@ export class ChartComponent implements OnInit {
     this.drawBars(data);
   }
 
-  onSelectCoin(coinId: string) {
+  onSelectCoin(coinId: any) {
     console.log("onSelectCoin(" + coinId + ") CALLED");
 
     this.coins.forEach(coin => {
       if(coinId == coin.id) {
-        coin.active = coin.active;
-        return;
+        coin.active = !coin.active;
       }
     });
 
+    let logMessage: string = "";
     this.coins.forEach(coin => {
-      console.log(coin.id + ": " + coin.active);
+      logMessage += coin.id + ": " + coin.active + ", ";
     });
-
+    console.log(logMessage);
   }
 
   private buildUrl() : string {
@@ -120,12 +128,4 @@ export class ChartComponent implements OnInit {
     .attr("fill", "#ff8080");
   }  
 
-}
-
-export class Coin{
-  constructor(
-    public readonly id: string,
-    public active: boolean
-  )
-  {}
 }

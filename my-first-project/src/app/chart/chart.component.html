@@ -7,34 +7,7 @@
 <figure id="bar"></figure>
 
 <div class="card-container">
-  <div class="card card-small" (click)="onSelectCoin('BTC')" tabindex="0">
-    <span>BTC</span>
-  </div>
-  <div class="card card-small" (click)="onSelectCoin('ETH')" tabindex="0">
-    <span>ETH</span>
-  </div>
-  <div class="card card-small" (click)="onSelectCoin('LTC')" tabindex="0">
-    <span>LTC</span>
-  </div>
-  <div class="card card-small" (click)="onSelectCoin('ADA')" tabindex="0">
-    <span>ADA</span>
-  </div>
-  <div class="card card-small" (click)="onSelectCoin('DOT')" tabindex="0">
-    <span>DOT</span>
-  </div>
-  <div class="card card-small" (click)="onSelectCoin('BCH')" tabindex="0">
-    <span>BCH</span>
-  </div>
-  <div class="card card-small" (click)="onSelectCoin('XLM')" tabindex="0">
-    <span>XLM</span>
-  </div>
-  <div class="card card-small" (click)="onSelectCoin('BNB')" tabindex="0">
-    <span>BNB</span>
-  </div>
-  <div class="card card-small" (click)="onSelectCoin('USDT')" tabindex="0">
-    <span>USDT</span>
-  </div>
-  <div class="card card-small" (click)="onSelectCoin('XMR')" tabindex="0">
-    <span>XMR</span>
+  <div class="card card-small" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin.id)">
+    <span>{{ coin.id }}</span>
   </div>
 </div>
