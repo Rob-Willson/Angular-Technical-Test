@@ -1,12 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { OptionAComponent } from './option-a/option-a.component';
-import { OptionBComponent } from './option-b/option-b.component';
+import { ChartComponent } from './chart/chart.component';
 
 const routes: Routes = [
-  {path: '', component: OptionAComponent},
-  {path: 'option-b', component: OptionBComponent}
+  {path: '', component: ChartComponent}
 ];
 
 @NgModule({
