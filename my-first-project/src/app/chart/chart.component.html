@@ -2,12 +2,13 @@
 
 <h3>Crypto Chart</h3>
 
-<p>Chart goes here</p>
-
 <figure id="bar"></figure>
 
 <div class="card-container">
-  <div class="card card-small" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin.id)">
+  <div class="card card-small" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin.id)" [ngStyle]="{
+      'background-color': coin.active == true ? 'rgb(60, 180, 140)' : 'black',
+      'color': coin.active == true ? 'black' : 'grey'
+    }">
     <span>{{ coin.id }}</span>
   </div>
 </div>
