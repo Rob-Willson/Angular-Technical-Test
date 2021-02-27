@@ -5,10 +5,7 @@
 <figure id="bar"></figure>
 
 <div class="card-container">
-  <div class="card card-small" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin.id)" [ngStyle]="{
-      'background-color': coin.active == true ? 'rgb(60, 180, 140)' : 'black',
-      'color': coin.active == true ? 'black' : 'grey'
-    }">
+  <div class="card card-small" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin.id)" [class.card-selected]="coin.active == true">
     <span>{{ coin.id }}</span>
   </div>
 </div>
