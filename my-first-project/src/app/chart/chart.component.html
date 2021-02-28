@@ -4,8 +4,8 @@
 
 <figure id="bar"></figure>
 
-<div class="card-container">
-  <div class="card card-small" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin.id)" [class.card-selected]="coin.active == true">
+<div class="chart-button-container">
+  <button class="chart-button" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin.id)" [class.chart-button-selected]="coin.active == true">
     <span>{{ coin.id }}</span>
-  </div>
+  </button>  
 </div>
