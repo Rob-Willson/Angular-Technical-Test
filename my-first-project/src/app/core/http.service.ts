@@ -9,7 +9,22 @@ export class HttpService {
 
   constructor(private httpClient : HttpClient) {}
 
-  getRequestObservable(url: string) : Observable<any> { 
+  public getRequestCryptocompareHistoric(urlCurrencyId: string, urlCurrencyStandardId: string, urlCount: number) : Observable<any> {
+    const urlBase: string = "https://min-api.cryptocompare.com/data/v2/histoday";
+
+    // Build the endpoint url
+    let url : string = urlBase + "?";
+    // Request requires a querying currency (fsym) and a standard (tsym) to compare it with
+    url += "fsym=" + urlCurrencyId + "&";
+    url += "tsym=" + urlCurrencyStandardId;
+    url += "&limit=" + (urlCount);
+    // TODO:
+    //url += "&api_key=" + "{key}";
+    
+    return this.getRequestObservable(url);
+  }
+
+  private getRequestObservable(url: string) : Observable<any> { 
     return this.httpClient.get<any>(url);
   }
 

@@ -11,11 +11,9 @@ import * as d3 from "d3";
 })
 
 export class ChartComponent implements OnInit {
-  private readonly urlBase: string = "https://min-api.cryptocompare.com/data/v2/histoday";
-  private urlCurrencyId: string = "BTC";
-  private urlCurrencyStandardId: string = "USD";
-  private urlCount: number = 90;
-  // TODO: API key?
+  private selectedCurrencyId: string = "BTC";
+  private selectedCurrencyStandardId: string = "USD";
+  private dataCount: number = 90;
 
   private svg;
   private margin: number = 50;
@@ -32,26 +30,6 @@ export class ChartComponent implements OnInit {
     this.updatePlot();
   }
 
-  private buildUrl() : string {
-    let url : string = this.urlBase + "?";
-    // Request requires a querying currency (fsym) and a standard (tsym) to compare it with
-    url += "fsym=" + this.urlCurrencyId + "&";
-    url += "tsym=" + this.urlCurrencyStandardId;
-    url += "&limit=" + (this.urlCount);
-    // TODO:
-    //url += "&api_key=" + "{key}";
-    return url;
-  }
-
-  updatePlot(): void {
-    this.httpService.getRequestObservable(this.buildUrl()).subscribe((data) => {
-      console.log("RAW DATA: ");
-      console.log(data);
-      let dataProcessedFromObservable = CryptoData.parseFromJSON(data);
-      this.drawPlot(dataProcessedFromObservable);
-    });
-  }
-
   private createSvg(): void {
     // Clean up any existing chart
     d3.select("svg").remove();
@@ -65,6 +43,15 @@ export class ChartComponent implements OnInit {
     .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
   }
 
+  private updatePlot(): void {
+    this.httpService.getRequestCryptocompareHistoric(this.selectedCurrencyId, this.selectedCurrencyStandardId, this.dataCount).subscribe((data) => {
+      console.log("RAW DATA: ");
+      console.log(data);
+      let dataProcessedFromObservable = CryptoData.parseFromJSON(data);
+      this.drawPlot(dataProcessedFromObservable);
+    });
+  }
+  
   private drawPlot(data: CryptoData[]): void {
     // Create the X-axis band scale
     // TODO: This has a weird cast. It"s required because d3.min/max don"t support returning undefined
@@ -102,49 +89,41 @@ export class ChartComponent implements OnInit {
     const points: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.average())]
     );
-    this.svg
-      .append("g")
-      .append("path")
-      .attr("id", "line")
-      .style("fill", "none")
-      .style("stroke", "rgba(70, 130, 180, 1)")
-      .style("stroke-width", "2.5px")
-      .attr("d", d3.line()
-        .curve(d3.curveBasis)
-        .x(d => d[0])
-        .y(d => d[1])(points));
+    this.drawLine(x, y, points, 2.5, "rgba(70, 130, 180, 1)");
     
     const pointsHighs: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.high)]
     );
-    this.svg
-      .append("g")
-      .append("path")
-      .attr("id", "line")
-      .style("fill", "none")
-      .style("stroke", "rgba(70, 130, 180, 1)")
-      .style("stroke-width", "1.5px")
-      .attr("d", d3.line()
-        .curve(d3.curveBasis)
-        .x(d => d[0])
-        .y(d => d[1])(pointsHighs));
+    this.drawLine(x, y, pointsHighs, 1.5, "rgba(70, 130, 180, 0.7)");
 
     const pointsLows: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.low)]
     );
+    this.drawLine(x, y, pointsLows, 1.5, "rgba(70, 130, 180, 0.7)");  
+
+    // Draw the area
+    const pointsArea: [number, number][] = pointsHighs.concat(pointsLows.reverse());
+    this.drawArea(pointsArea, "rgba(70, 130, 180, 0.2)");
+
+    // Draw the dots
+    //this.drawDots(x, y, data, "rgba(70, 130, 180, 0.2)");
+  }
+
+  private drawLine(x, y, points: [number, number][], width: Number, color: string): void {
     this.svg
       .append("g")
       .append("path")
       .attr("id", "line")
       .style("fill", "none")
-      .style("stroke", "rgba(70, 130, 180, 1)")
-      .style("stroke-width", "1.5px")
+      .style("stroke", color)
+      .style("stroke-width", width)
       .attr("d", d3.line()
         .curve(d3.curveBasis)
         .x(d => d[0])
-        .y(d => d[1])(pointsLows));     
+        .y(d => d[1])(points));
+  }
 
-    const pointsArea: [number, number][] = pointsHighs.concat(pointsLows.reverse());
+  private drawArea(points: [number, number][], color: string) {
     var areaFunction = d3.area()
     .curve(d3.curveBasis)
     .x(d => d[0])
@@ -153,19 +132,19 @@ export class ChartComponent implements OnInit {
 
     this.svg
       .append("path")
-      .attr("fill", "rgba(70, 130, 180, 0.2)")
-      .attr("d", areaFunction(pointsArea));  
+      .attr("fill", color)
+      .attr("d", areaFunction(points));  
+  }
 
-    // Plot the dots
-    // this.svg.append("g")
-    // .selectAll("dot")
-    // .data(data)
-    // .enter()
-    // .append("circle")
-    // .attr("cx", d => x(d.time))
-    // .attr("cy", d => y(d.average()))
-    // .classed("chart-point", true);
-
+  private drawDots(x, y, data: CryptoData[], color: string) {
+    this.svg.append("g")
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("cx", d => x(d.time))
+    .attr("cy", d => y(d.average()))
+    .classed("chart-point", true);
   }
 
   onSelectCoin(coinId: any) {
