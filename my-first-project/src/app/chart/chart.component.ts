@@ -15,7 +15,7 @@ export class ChartComponent implements OnInit {
   private readonly urlBase: string = "https://min-api.cryptocompare.com/data/v2/histoday";
   private urlCurrencyId: string = "BTC";
   private urlCurrencyStandardId: string = "USD";
-  private urlCount: number = 50;
+  private urlCount: number = 90;
   // TODO: API key?
 
   private svg;
@@ -37,14 +37,7 @@ export class ChartComponent implements OnInit {
     new Coin("XMR", false),
   ];
 
-  subscription: Subscription;
-
-  constructor(private httpService : HttpService) {
-    this.subscription = interval(5000).subscribe(x => {
-      this.createSvg();
-      this.updatePlot();
-    });
-  }
+  constructor(private httpService : HttpService) { }
 
   ngOnInit(): void {
     this.createSvg();
