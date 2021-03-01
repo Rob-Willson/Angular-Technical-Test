@@ -86,3 +86,16 @@ button {
   text-align: top;
   margin-top: 30px;
 }
+
+/* d3 only seems to support referencing the base styles file (ignoring component styles), so we have to put this here
+Could use /deep/ et al., but that's depreciated and it's future browser support is looking patchy */
+.chart-point {
+  r: 6px;
+  fill: rgb(66, 135, 192);
+  transition: all 0.2s ease-in-out;
+}
+.chart-point:hover {
+  r: 14px;
+  fill: rgb(85, 179, 233);
+  transition: all 0.2s ease-in-out;
+}
