@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpService } from "../core/http.service";
-import { interval, Subscription } from "rxjs";
 import { CryptoData } from "../core/data.template";
 import { Coin } from "../core/coin.template";
 import * as d3 from "d3";
@@ -59,8 +58,9 @@ export class ChartComponent implements OnInit {
     // Request requires a querying currency (fsym) and a standard (tsym) to compare it with
     url += "fsym=" + this.urlCurrencyId + "&";
     url += "tsym=" + this.urlCurrencyStandardId;
-    // Cryptocompare API uses base 0 for it"s counts, but most humans don"t
-    url += "&limit=" + (this.urlCount - 1);
+    url += "&limit=" + (this.urlCount);
+    // TODO:
+    //url += "&api_key=" + "{key}";
     return url;
   }
 
