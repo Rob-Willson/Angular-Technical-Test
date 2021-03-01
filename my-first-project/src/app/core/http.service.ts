@@ -6,23 +6,29 @@ import { CryptoData } from './data.template';
   providedIn: 'root'
 })
 export class HttpService {
-  // TODO: Why is this "undefined" assignment required?
-  dataProcessed: CryptoData | undefined;
 
-  constructor(private httpClient : HttpClient) { }
+  private dataProcessed: CryptoData[] = [];
+  
+  constructor(private httpClient : HttpClient) {}
 
-  getRequest(url: string) {
+  getRequest(url: string): CryptoData[] {
     console.log("CALLED: getRequest to '" + url + "'")
     
     this.httpClient.get<any>(url).subscribe(
       response => {
-        let allDataProcessed: CryptoData[] = CryptoData.ParseFromJSON(response);
+        this.dataProcessed = CryptoData.ParseFromJSON(response);
 
-        allDataProcessed.forEach(element => {
+        this.dataProcessed.forEach(element => {
           console.log(element);
         });
+
+        return this.dataProcessed;
       }
     );
+
+    // TODO: This fallthrough will only every return an empty collection, not sure when it's actually called
+    //       Probably missing something here... observers?
+    return this.dataProcessed;
   }
   
 }
