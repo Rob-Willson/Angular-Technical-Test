@@ -41,3 +41,15 @@
   transform: translateY(-1px);
   background-color: rgba(60, 180, 140, 0.5);
 }
+
+/deep/ .chart-point {
+  r: 6px;
+  fill: rgb(66, 135, 192);
+  transition: all 0.2s ease-in-out;
+}
+
+/deep/ .chart-point:hover {
+  r: 14px;
+  fill: rgb(85, 179, 233);
+  transition: all 0.2s ease-in-out;
+}
