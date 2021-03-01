@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../core/http.service';
-import { CryptoData, CryptoDataRaw } from '../core/data.template';
+import { CryptoData } from '../core/data.template';
 import { Coin } from '../core/coin.template';
 import * as d3 from 'd3';
 
@@ -14,7 +14,7 @@ export class ChartComponent implements OnInit {
   private readonly urlBase: string = "https://min-api.cryptocompare.com/data/v2/histoday";
   private urlCurrencyId: string = "BTC";
   private urlCurrencyStandardId: string = "USD";
-  private urlCount: number = 5;
+  private urlCount: number = 50;
   // TODO: API key?
 
   private svg;
@@ -39,25 +39,18 @@ export class ChartComponent implements OnInit {
   constructor(private httpService : HttpService) { }
 
   ngOnInit(): void {
-
-    this.httpService.getRequest(this.buildUrl());
-
-    // TODO: This should be the data from the API call
-    let data: CryptoData[] = [
-      new CryptoData("A", 1614614800, 48000.0, 43000.0),
-      new CryptoData("B", 1614624900, 53000.0, 41000.0),
-      new CryptoData("C", 1614635000, 51000.0, 46000.0),
-      new CryptoData("D", 1614645100, 54000.0, 51000.0),
-      new CryptoData("E", 1614655200, 59000.0, 52000.0),
-      new CryptoData("A", 1614665300, 48000.0, 43000.0),
-      new CryptoData("B", 1614675400, 53000.0, 41000.0),
-      new CryptoData("C", 1614685500, 51000.0, 46000.0),
-      new CryptoData("D", 1614695600, 54000.0, 51000.0),
-      new CryptoData("E", 1614705700, 59000.0, 52000.0)
-    ];
-
     this.createSvg();
-    this.drawPlot(data);
+    this.updatePlot();
+  }
+
+  updatePlot(): void {
+    console.log("requesting");
+    this.httpService.getRequestObservable(this.buildUrl()).subscribe((data) => {
+      console.log("RAW DATA: ");
+      console.log(data);
+      let dataProcessedFromObservable = CryptoData.parseFromJSON(data);
+      this.drawPlot(dataProcessedFromObservable);
+    });
   }
 
   onSelectCoin(coinId: any) {
@@ -140,7 +133,6 @@ export class ChartComponent implements OnInit {
         .x(d => d[0])
         .y(d => d[1])(points));
     
-
     // Plot the dots
     this.svg.append("g")
     .selectAll("dot")
@@ -150,7 +142,6 @@ export class ChartComponent implements OnInit {
     .attr("cx", d => x(d.time))
     .attr("cy", d => y(d.high))
     .classed("chart-point", true);
-
   }
 
 }

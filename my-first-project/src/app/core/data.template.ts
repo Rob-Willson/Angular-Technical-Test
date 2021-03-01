@@ -46,7 +46,10 @@ export class CryptoData {
   {}
 
   public static parseFromJSON (rawJsonData: any): CryptoData[] {
-    let dataRaw: CryptoDataRaw = rawJsonData
+    let dataRaw: CryptoDataRaw = rawJsonData;
+
+    //console.log(dataRaw);
+
     let cryptoDataProcessed: CryptoData[] = [];
 
     for (let i = 0; i < dataRaw.Data.Data.length; i++) {
@@ -57,7 +60,7 @@ export class CryptoData {
         dataRaw.Data.Data[i].low
       ));
 
-      console.log(new Date(dataRaw.Data.Data[i].time));
+      //console.log(new Date(dataRaw.Data.Data[i].time));
       
     }
     return cryptoDataProcessed;
