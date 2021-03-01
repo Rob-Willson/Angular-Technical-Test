@@ -23,34 +23,13 @@ export class ChartComponent implements OnInit {
   private height: number = 400 - (this.margin * 2);
 
   // All supported crytocurrencies with their default display values
-  public coins: Coin[] = [
-    new Coin("BTC", true),
-    new Coin("ETH", false),
-    new Coin("LTC", false),
-    new Coin("ADA", false),
-    new Coin("DOT", false),
-    new Coin("BCH", false),
-    new Coin("XLM", false),
-    new Coin("BNB", false),
-    new Coin("USDT", false),
-    new Coin("XMR", false),
-  ];
+  public coins: Coin[] = Coin.GetAllCoins();
 
-  constructor(private httpService : HttpService) { }
+  constructor(private httpService : HttpService) {}
 
   ngOnInit(): void {
     this.createSvg();
     this.updatePlot();
-  }
-
-  updatePlot(): void {
-    console.log("requesting");
-    this.httpService.getRequestObservable(this.buildUrl()).subscribe((data) => {
-      console.log("RAW DATA: ");
-      console.log(data);
-      let dataProcessedFromObservable = CryptoData.parseFromJSON(data);
-      this.drawPlot(dataProcessedFromObservable);
-    });
   }
 
   private buildUrl() : string {
@@ -62,6 +41,15 @@ export class ChartComponent implements OnInit {
     // TODO:
     //url += "&api_key=" + "{key}";
     return url;
+  }
+
+  updatePlot(): void {
+    this.httpService.getRequestObservable(this.buildUrl()).subscribe((data) => {
+      console.log("RAW DATA: ");
+      console.log(data);
+      let dataProcessedFromObservable = CryptoData.parseFromJSON(data);
+      this.drawPlot(dataProcessedFromObservable);
+    });
   }
 
   private createSvg(): void {
