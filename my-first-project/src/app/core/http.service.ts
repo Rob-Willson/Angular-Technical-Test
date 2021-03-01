@@ -16,7 +16,7 @@ export class HttpService {
     
     this.httpClient.get<any>(url).subscribe(
       response => {
-        this.dataProcessed = CryptoData.ParseFromJSON(response);
+        this.dataProcessed = CryptoData.parseFromJSON(response);
 
         this.dataProcessed.forEach(element => {
           console.log(element);
