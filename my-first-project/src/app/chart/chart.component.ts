@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpService } from "../core/http.service";
 import { CryptoData } from "../core/data.template";
-import { Coin } from "../core/coin.template";
+import { Coin, CoinType } from "../core/coin.template";
 import * as d3 from "d3";
 
 @Component({
@@ -18,7 +18,7 @@ export class ChartComponent implements OnInit {
   private svg;
   private margin: number = 50;
   private width: number = 800 - (this.margin * 2);
-  private height: number = 400 - (this.margin * 2);
+  private height: number = 600 - (this.margin * 2);
 
   // All supported crytocurrencies with their default display values
   public coins: Coin[] = Coin.GetAllCoins();
@@ -44,6 +44,8 @@ export class ChartComponent implements OnInit {
   }
 
   private updatePlot(): void {
+    console.log("updatePlot passed value of: " + this.getSelectedCurrencyId());
+
     this.httpService.getRequestCryptocompareHistoric(this.selectedCurrencyId, this.selectedCurrencyStandardId, this.dataCount).subscribe((data) => {
       console.log("RAW DATA: ");
       console.log(data);
@@ -54,20 +56,18 @@ export class ChartComponent implements OnInit {
   
   private drawPlot(data: CryptoData[]): void {
     // Create the X-axis band scale
-    // TODO: This has a weird cast. It"s required because d3.min/max don"t support returning undefined
     const x = d3
     .scaleTime()
     .domain([d3.min(data, d => d.time) as number, d3.max(data, d => d.time) as number])
     .range([0, this.width]);
 
     // Create the Y-axis band scale
-    // TODO: This has a weird cast. It"s required because d3.min/max don"t support returning undefined
     const y = d3
     .scaleLinear()
     .domain([0, d3.max(data, d => d.average()) as number])
     .range([this.height, 0]);
 
-    // Draw the X-axis on the DOM
+    // Draw the X-axis to the DOM
     this.svg
     .append("g")
     .attr("transform", "translate(0," + this.height + ")")
@@ -76,7 +76,7 @@ export class ChartComponent implements OnInit {
     .attr("transform", "translate(-10,0)rotate(-45)")
     .style("text-anchor", "end");
 
-    // Draw the Y-axis on the DOM
+    // Draw the Y-axis to the DOM
     this.svg
     .append("g")
     .call(d3.axisLeft(y));
@@ -161,6 +161,23 @@ export class ChartComponent implements OnInit {
       logMessage += coin.id + ": " + coin.active + ", ";
     });
     console.log(logMessage);
+
+    this.selectedCurrencyId = this.getSelectedCurrencyId();
+
+    this.createSvg();
+    this.updatePlot();
+  }
+
+  private getSelectedCurrencyId(): string {
+    this.coins.forEach(coin => {
+      if(coin.active){
+        console.log("getSelectedCurrencyId() returning: " + coin.id.toString());
+        return coin.id.toString();
+      }
+    });
+
+    console.log("Unexpected call. Bug?");
+    return "undefined";
   }
 
 }

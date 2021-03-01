@@ -10,7 +10,10 @@ export class HttpService {
   constructor(private httpClient : HttpClient) {}
 
   public getRequestCryptocompareHistoric(urlCurrencyId: string, urlCurrencyStandardId: string, urlCount: number) : Observable<any> {
-    const urlBase: string = "https://min-api.cryptocompare.com/data/v2/histoday";
+    let urlBase: string = "https://min-api.cryptocompare.com/data/v2/histoday";
+
+    console.log("incoming urlCurrencyId: " + urlCurrencyId);
+    console.log(urlCurrencyStandardId);
 
     // Build the endpoint url
     let url : string = urlBase + "?";
@@ -21,6 +24,8 @@ export class HttpService {
     // TODO:
     //url += "&api_key=" + "{key}";
     
+    console.log("ENDPOINT: " + url);
+
     return this.getRequestObservable(url);
   }
 
