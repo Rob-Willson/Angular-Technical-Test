@@ -37,7 +37,7 @@ export class CryptoDataRawSummaryData {
 // Processed data object ready for use
 // TODO: Observables?
 export class CryptoData {
-  private constructor(
+  public constructor(
     public readonly currency: string,
     public readonly time: number,
     public readonly high: number,
@@ -45,7 +45,7 @@ export class CryptoData {
   )
   {}
 
-  public static ParseFromJSON (rawJsonData: any): CryptoData[] {
+  public static parseFromJSON (rawJsonData: any): CryptoData[] {
     let dataRaw: CryptoDataRaw = rawJsonData
     let cryptoDataProcessed: CryptoData[] = [];
 
@@ -56,8 +56,19 @@ export class CryptoData {
         dataRaw.Data.Data[i].high,
         dataRaw.Data.Data[i].low
       ));
-    }
 
+      console.log(new Date(dataRaw.Data.Data[i].time));
+      
+    }
     return cryptoDataProcessed;
-  }  
+  }
+
+  public dateFromTime (): Date {
+    return new Date(this.time);
+  }
+
+  public average (): number {
+    return (this.high + this.low) * 0.5;
+  }
+
 }
