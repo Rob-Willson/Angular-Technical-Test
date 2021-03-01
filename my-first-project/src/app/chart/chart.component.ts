@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from '../core/http.service';
+import { interval, Subscription } from 'rxjs';
 import { CryptoData } from '../core/data.template';
 import { Coin } from '../core/coin.template';
 import * as d3 from 'd3';
@@ -22,6 +23,8 @@ export class ChartComponent implements OnInit {
   private width: number = 800 - (this.margin * 2);
   private height: number = 400 - (this.margin * 2);
 
+  subscription: Subscription;
+
   // All supported crytocurrencies with their default display values
   public coins: Coin[] = [
     new Coin("BTC", true),
@@ -36,7 +39,13 @@ export class ChartComponent implements OnInit {
     new Coin("XMR", false),
   ];
 
-  constructor(private httpService : HttpService) { }
+  constructor(private httpService : HttpService) {
+    this.subscription = interval(5000).subscribe(x => {
+      this.createSvg();
+      this.updatePlot();
+      console.log("done");
+    });
+  }
 
   ngOnInit(): void {
     this.createSvg();
@@ -80,6 +89,9 @@ export class ChartComponent implements OnInit {
   }
 
   private createSvg(): void {
+    // Clean up any existing chart
+    d3.select("svg").remove();
+
     this.svg = d3
     .select("figure#bar")
     .append("svg")
@@ -118,6 +130,11 @@ export class ChartComponent implements OnInit {
     .append("g")
     .call(d3.axisLeft(y));
 
+    this.plotData(x, y, data);
+
+  }
+
+  private plotData(x, y, data: CryptoData[]): void {
     // Draw the lines
     const points: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.high)]
@@ -133,6 +150,7 @@ export class ChartComponent implements OnInit {
         .x(d => d[0])
         .y(d => d[1])(points));
     
+
     // Plot the dots
     this.svg.append("g")
     .selectAll("dot")
@@ -142,6 +160,6 @@ export class ChartComponent implements OnInit {
     .attr("cx", d => x(d.time))
     .attr("cy", d => y(d.high))
     .classed("chart-point", true);
-  }
+    }
 
 }
