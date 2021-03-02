@@ -1,14 +1,14 @@
 <input type="hidden" #selection>
 
-<h3>Historic daily high/low {{ this.selectedCurrencyId.id }} vs {{ this.selectedCurrencyStandardId }}</h3>
+<h3>Historic daily high/low {{ this.selectedCurrencyId }} vs {{ this.selectedCurrencyStandardId }}</h3>
 
 <figure id="chart"></figure>
 
 <ol>
   <li>Select a cryptocurrency to display historic daily high/average/low data
   <div class="chart-button-container">
-    <button class="chart-button" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin.id)" [class.chart-button-selected]="coin.active == true">
-      <span>{{ coin.id }}</span>
+    <button class="chart-button" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin)" [class.chart-button-selected]="selectedCurrencyId == coin">
+      <span>{{ coin }}</span>
     </button>
   </div>
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpService } from "../core/http.service";
 import { CryptoData } from "../core/data";
-import { Coin } from "../core/coin";
+import { Currency } from "../core/currency";
 import { ColorRGBA } from "../core/color";
 import * as d3 from "d3";
 
@@ -12,16 +12,27 @@ import * as d3 from "d3";
 })
 
 export class ChartComponent implements OnInit {
-  public selectedCurrencyId: Coin;
-  public coins: Coin[] = [];
+  public selectedCurrencyId: Currency;
+  public coins: Currency[] = [
+    Currency.BTC,
+    Currency.ETH ,
+    Currency.LTC,
+    Currency.ADA,
+    Currency.DOT,
+    Currency.BCH,
+    Currency.XLM,
+    Currency.BNB,
+    Currency.USDT,
+    Currency.XMR
+  ];
 
-  public selectedCurrencyStandardId: string;
-  public coinStandards: string[] = [
-    "GBP",
-    "EUR",
-    "USD",
-    "JPY",
-    "RUB"
+  public selectedCurrencyStandardId: Currency;
+  public coinStandards: Currency[] = [
+    Currency.GBP,
+    Currency.EUR,
+    Currency.USD,
+    Currency.JPY,
+    Currency.RUB
   ];
 
   public currentChartColor: ColorRGBA;
@@ -41,11 +52,10 @@ export class ChartComponent implements OnInit {
   private width: number = 800 - (this.marginWidth * 2);
   private height: number = 500 - (this.marginHeight * 2);
   public linesSmooth: boolean = true;
-    
+
   constructor(private httpService : HttpService) {
-    this.coins = Coin.GetAllCoins();
     this.selectedCurrencyId = this.coins[0];
-    this.selectedCurrencyStandardId = "GBP";
+    this.selectedCurrencyStandardId = this.coinStandards[0];
     this.currentChartColor = this.colors[0];
   }
 
@@ -68,7 +78,7 @@ export class ChartComponent implements OnInit {
   }
 
   private updatePlot(): void {
-    this.httpService.getRequestCryptocompareHistoric(this.selectedCurrencyId.id, this.selectedCurrencyStandardId, this.dataCount).subscribe((data) => {
+    this.httpService.getRequestCryptocompareHistoric(this.selectedCurrencyId, this.selectedCurrencyStandardId, this.dataCount).subscribe((data) => {
       console.log("RAW DATA: ");
       console.log(data);
       let dataProcessedFromObservable = CryptoData.parseFromJSON(data);
@@ -177,20 +187,8 @@ export class ChartComponent implements OnInit {
     .classed("chart-point", true);
   }
 
-  public onSelectCoin(coinId: any) {
-    if(coinId == this.selectedCurrencyId.id) {
-      return;
-    }
-
-    this.coins.forEach(coin => {
-      if(coinId == coin.id) {
-        coin.active = !coin.active;
-        this.selectedCurrencyId = coin;
-      }
-      else {
-        coin.active = false;
-      }
-    });
+  public onSelectCoin(currency: any) {
+    this.selectedCurrencyId = currency;
 
     this.createSvg();
     this.updatePlot();
