@@ -11,19 +11,22 @@ import * as d3 from "d3";
 })
 
 export class ChartComponent implements OnInit {
-  private selectedCurrencyId: string = "BTC";
+  private selectedCurrencyId: Coin;
   private selectedCurrencyStandardId: string = "USD";
   private dataCount: number = 90;
 
   private svg;
   private margin: number = 50;
   private width: number = 800 - (this.margin * 2);
-  private height: number = 600 - (this.margin * 2);
+  private height: number = 300 - (this.margin * 2);
 
   // All supported crytocurrencies with their default display values
-  public coins: Coin[] = Coin.GetAllCoins();
+  public coins: Coin[] = [];
 
-  constructor(private httpService : HttpService) {}
+  constructor(private httpService : HttpService) {
+    this.coins = Coin.GetAllCoins();
+    this.selectedCurrencyId = this.coins[0];
+  }
 
   ngOnInit(): void {
     this.createSvg();
@@ -44,9 +47,7 @@ export class ChartComponent implements OnInit {
   }
 
   private updatePlot(): void {
-    console.log("updatePlot passed value of: " + this.getSelectedCurrencyId());
-
-    this.httpService.getRequestCryptocompareHistoric(this.selectedCurrencyId, this.selectedCurrencyStandardId, this.dataCount).subscribe((data) => {
+    this.httpService.getRequestCryptocompareHistoric(this.selectedCurrencyId.id, this.selectedCurrencyStandardId, this.dataCount).subscribe((data) => {
       console.log("RAW DATA: ");
       console.log(data);
       let dataProcessedFromObservable = CryptoData.parseFromJSON(data);
@@ -153,31 +154,15 @@ export class ChartComponent implements OnInit {
     this.coins.forEach(coin => {
       if(coinId == coin.id) {
         coin.active = !coin.active;
+        this.selectedCurrencyId = coin;
+      }
+      else {
+        coin.active = false;
       }
     });
-
-    let logMessage: string = "";
-    this.coins.forEach(coin => {
-      logMessage += coin.id + ": " + coin.active + ", ";
-    });
-    console.log(logMessage);
-
-    this.selectedCurrencyId = this.getSelectedCurrencyId();
 
     this.createSvg();
     this.updatePlot();
-  }
-
-  private getSelectedCurrencyId(): string {
-    this.coins.forEach(coin => {
-      if(coin.active){
-        console.log("getSelectedCurrencyId() returning: " + coin.id.toString());
-        return coin.id.toString();
-      }
-    });
-
-    console.log("Unexpected call. Bug?");
-    return "undefined";
   }
 
 }
