@@ -35,7 +35,14 @@ export class ChartComponent implements OnInit {
     Currency.RUB
   ];
   
-
+  public selectedTimeframe: number;
+  public readonly timeframes: number[] = [
+    30,
+    60,
+    90,
+    180,
+    360
+  ];
 
   public selectedChartColor: ColorRGBA;
   public readonly colors: ColorRGBA[] = [
@@ -201,7 +208,12 @@ export class ChartComponent implements OnInit {
     this.updatePlot();
   }
 
+  public onSelectTimeframe(timeframe: any) {
+    this.selectedTimeframe = timeframe;
 
+    this.createSvg();
+    this.updatePlot();
+  }
 
   public onSelectColor(color: any) {
     this.selectedChartColor = color;

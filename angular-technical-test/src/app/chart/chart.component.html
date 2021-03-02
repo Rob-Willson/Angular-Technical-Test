@@ -19,7 +19,12 @@
     </button>
   </div>
 
-
+  <li>Choose how far back to see
+  <div class="chart-button-container">
+    <button class="chart-button" tabindex="0" *ngFor="let timeframe of this.timeframes" (click)="onSelectTimeframe(timeframe)" [class.chart-button-selected]="this.selectedTimeframe == timeframe">
+      <span>{{ timeframe }} days</span>
+    </button>
+  </div>
 
   <li>Adjust the color of the chart lines
   <div class="chart-button-container">
