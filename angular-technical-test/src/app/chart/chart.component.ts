@@ -37,11 +37,11 @@ export class ChartComponent implements OnInit {
   
   public selectedTimeframe: number;
   public readonly timeframes: number[] = [
-    30,
-    60,
+    45,
     90,
     180,
-    360
+    360,
+    720
   ];
 
   public selectedChartColor: ColorRGBA;
@@ -63,7 +63,7 @@ export class ChartComponent implements OnInit {
   constructor(private httpService : HttpService) {
     this.selectedCurrency = this.currencies[0];
     this.selectedCurrencyStandard = this.currencyStandards[0];
-    this.selectedTimeframe = this.timeframes[0];
+    this.selectedTimeframe = this.timeframes[1];
     this.selectedChartColor = this.colors[0];
   }
 
