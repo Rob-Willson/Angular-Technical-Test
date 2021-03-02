@@ -23,6 +23,26 @@ p {
   color: rgb(60, 180, 140);
 }
 
+ol {
+	margin: 0px;
+	padding: 0px;
+  color: rgb(60, 180, 140);
+	counter-reset: item;
+}
+ol li {
+	margin: 0px;
+	padding: 0px;
+	list-style-type: none;
+	counter-increment: item;
+}
+ol li:before {
+	margin: 0px;
+	padding: 0px;
+  color: rgb(85, 215, 170);
+	content:counter(item) ". ";
+	font-weight: bold;
+}
+
 a,
 a:visited,
 a:hover {
@@ -41,7 +61,7 @@ button {
   color: grey;
   margin: 0 2px 0 2px;
   padding: 16px;
-  line-height: 24px;
+  line-height: 20px;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
 }
@@ -78,24 +98,23 @@ button {
   position: relative;
   width: 80%;
   max-width: 1080px;
-  border-radius: 5px;
-  border: 1px solid rgb(128, 128, 128);
-  overflow: hidden;
-  background-color: rgb(15, 15, 16);
-  padding: 1rem;
   text-align: top;
   margin-top: 30px;
+}
+
+#chart {
+  margin-left: 5px;
 }
 
 /* d3 only seems to support referencing the base styles file (ignoring component styles), so we have to put this here
 Could use /deep/ et al., but that's depreciated and it's future browser support is looking patchy */
 .chart-point {
-  r: 6px;
-  fill: rgb(66, 135, 192);
+  r: 15px;
+  fill-opacity: 0;
   transition: all 0.2s ease-in-out;
 }
 .chart-point:hover {
-  r: 14px;
-  fill: rgb(85, 179, 233);
+  r: 16px;
+  fill-opacity: 0.5;
   transition: all 0.2s ease-in-out;
 }
