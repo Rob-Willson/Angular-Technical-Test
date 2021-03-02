@@ -12,8 +12,8 @@ import * as d3 from "d3";
 })
 
 export class ChartComponent implements OnInit {
-  public selectedCurrencyId: Currency;
-  public coins: Currency[] = [
+  public selectedCurrency: Currency;
+  public readonly currencies: Currency[] = [
     Currency.BTC,
     Currency.ETH ,
     Currency.LTC,
@@ -26,25 +26,25 @@ export class ChartComponent implements OnInit {
     Currency.XMR
   ];
 
-  public selectedCurrencyStandardId: Currency;
-  public coinStandards: Currency[] = [
+  public selectedCurrencyStandard: Currency;
+  public readonly currencyStandards: Currency[] = [
     Currency.GBP,
     Currency.EUR,
     Currency.USD,
     Currency.JPY,
     Currency.RUB
   ];
+  
 
-  public currentChartColor: ColorRGBA;
-  public colors: ColorRGBA[] = [
+
+  public selectedChartColor: ColorRGBA;
+  public readonly colors: ColorRGBA[] = [
     new ColorRGBA(70, 130, 200, 1, "Blue"),
     new ColorRGBA(200, 70, 70, 1, "Red"),
     new ColorRGBA(200, 200, 70, 1, "Yellow"),
     new ColorRGBA(70, 200, 1, 1, "Green"),
     new ColorRGBA(180, 0, 180, 1, "Magenta")
   ];
-
-  private dataCount: number = 90;
 
   private svg;
   private marginWidth: number = 60;
@@ -54,9 +54,10 @@ export class ChartComponent implements OnInit {
   public linesSmooth: boolean = true;
 
   constructor(private httpService : HttpService) {
-    this.selectedCurrencyId = this.coins[0];
-    this.selectedCurrencyStandardId = this.coinStandards[0];
-    this.currentChartColor = this.colors[0];
+    this.selectedCurrency = this.currencies[0];
+    this.selectedCurrencyStandard = this.currencyStandards[0];
+    this.selectedTimeframe = this.timeframes[0];
+    this.selectedChartColor = this.colors[0];
   }
 
   ngOnInit(): void {
@@ -78,7 +79,7 @@ export class ChartComponent implements OnInit {
   }
 
   private updatePlot(): void {
-    this.httpService.getRequestCryptocompareHistoric(this.selectedCurrencyId, this.selectedCurrencyStandardId, this.dataCount).subscribe((data) => {
+    this.httpService.getRequestCryptocompareHistoric(this.selectedCurrency, this.selectedCurrencyStandard, this.selectedTimeframe).subscribe((data) => {
       console.log("RAW DATA: ");
       console.log(data);
       let dataProcessedFromObservable = CryptoData.parseFromJSON(data);
@@ -96,7 +97,6 @@ export class ChartComponent implements OnInit {
     // Create the Y-axis band scale
     const y = d3
     .scaleLinear()
-    //.domain([0, d3.max(data, d => d.average()) as number])
     .domain([0, d3.max(data, d => d.high) as number])
     .range([this.height, 0]);
 
@@ -143,7 +143,7 @@ export class ChartComponent implements OnInit {
   }
 
   private drawLine(points: [number, number][], width: Number, alpha: number): void {
-    let color: ColorRGBA = new ColorRGBA(this.currentChartColor.r, this.currentChartColor.g, this.currentChartColor.b, alpha, this.currentChartColor.descriptor);
+    let color: ColorRGBA = new ColorRGBA(this.selectedChartColor.r, this.selectedChartColor.g, this.selectedChartColor.b, alpha, this.selectedChartColor.descriptor);
 
     this.svg
       .append("g")
@@ -159,7 +159,7 @@ export class ChartComponent implements OnInit {
   }
 
   private drawArea(points: [number, number][], alpha: number) {
-    let color: ColorRGBA = new ColorRGBA(this.currentChartColor.r, this.currentChartColor.g, this.currentChartColor.b, alpha, this.currentChartColor.descriptor);
+    let color: ColorRGBA = new ColorRGBA(this.selectedChartColor.r, this.selectedChartColor.g, this.selectedChartColor.b, alpha, this.selectedChartColor.descriptor);
     
     var areaFunction = d3.area()
     .curve(this.linesSmooth ? d3.curveBasis : d3.curveLinear)
@@ -174,7 +174,7 @@ export class ChartComponent implements OnInit {
   }
 
   private drawDots(x, y, data: CryptoData[], alpha: number) {
-    let color: ColorRGBA = new ColorRGBA(this.currentChartColor.r, this.currentChartColor.g, this.currentChartColor.b, alpha, this.currentChartColor.descriptor);
+    let color: ColorRGBA = new ColorRGBA(this.selectedChartColor.r, this.selectedChartColor.g, this.selectedChartColor.b, alpha, this.selectedChartColor.descriptor);
     
     this.svg.append("g")
     .selectAll("dot")
@@ -187,22 +187,24 @@ export class ChartComponent implements OnInit {
     .classed("chart-point", true);
   }
 
-  public onSelectCoin(currency: any) {
-    this.selectedCurrencyId = currency;
+  public onSelectCurrency(currency: any) {
+    this.selectedCurrency = currency;
 
     this.createSvg();
     this.updatePlot();
   }
 
-  public onSelectStandard(coinStandard: any) {
-    this.selectedCurrencyStandardId = coinStandard;
+  public onSelectCurrencyStandard(coinStandard: any) {
+    this.selectedCurrencyStandard = coinStandard;
 
     this.createSvg();
     this.updatePlot();
   }
+
+
 
   public onSelectColor(color: any) {
-    this.currentChartColor = color;
+    this.selectedChartColor = color;
 
     this.createSvg();
     this.updatePlot();

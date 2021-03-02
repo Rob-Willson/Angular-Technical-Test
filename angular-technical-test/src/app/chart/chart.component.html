@@ -1,30 +1,25 @@
 <input type="hidden" #selection>
 
-<h3>Historic daily high/low {{ this.selectedCurrencyId }} vs {{ this.selectedCurrencyStandardId }}</h3>
+<h3>Historic daily high/low {{ this.selectedCurrency }} vs {{ this.selectedCurrencyStandard }}</h3>
 
 <figure id="chart"></figure>
 
 <ol>
   <li>Select a cryptocurrency to display historic daily high/average/low data
   <div class="chart-button-container">
-    <button class="chart-button" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin)" [class.chart-button-selected]="selectedCurrencyId == coin">
-      <span>{{ coin }}</span>
+    <button class="chart-button" tabindex="0" *ngFor="let currency of this.currencies" (click)="onSelectCurrency(currency)" [class.chart-button-selected]="selectedCurrency == currency">
+      <span>{{ currency }}</span>
     </button>
   </div>
 
   <li>Choose a currency as a standard for valuation
   <div class="chart-button-container">
-    <button class="chart-button" tabindex="0" *ngFor="let standard of this.coinStandards" (click)="onSelectStandard(standard)" [class.chart-button-selected]="this.selectedCurrencyStandardId == standard">
+    <button class="chart-button" tabindex="0" *ngFor="let standard of this.currencyStandards" (click)="onSelectCurrencyStandard(standard)" [class.chart-button-selected]="this.selectedCurrencyStandard == standard">
       <span>{{ standard }}</span>
     </button>
   </div>
 
-  <li>Choose how far back to see
-  <div class="chart-button-container">
-    <button class="chart-button" tabindex="0">
-      <span>[TODO]</span>
-    </button>
-  </div>
+
 
   <li>Adjust the color of the chart lines
   <div class="chart-button-container">

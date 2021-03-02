@@ -61,7 +61,7 @@ button {
   color: grey;
   margin: 0 2px 0 2px;
   padding: 16px;
-  line-height: 20px;
+  line-height: 18px;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
 }
