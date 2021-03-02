@@ -1,7 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpService } from "../core/http.service";
-import { CryptoData } from "../core/data.template";
-import { Coin } from "../core/coin.template";
+import { CryptoData } from "../core/data";
+import { Coin } from "../core/coin";
+import { ColorRGBA } from "../core/color";
 import * as d3 from "d3";
 
 @Component({
@@ -11,23 +12,41 @@ import * as d3 from "d3";
 })
 
 export class ChartComponent implements OnInit {
-  private selectedCurrencyId: Coin;
-  private selectedCurrencyStandardId: string = "USD";
+  public selectedCurrencyId: Coin;
+  public coins: Coin[] = [];
+
+  public selectedCurrencyStandardId: string;
+  public coinStandards: string[] = [
+    "GBP",
+    "EUR",
+    "USD",
+    "JPY",
+    "RUB"
+  ];
+
+  public currentChartColor: ColorRGBA;
+  public colors: ColorRGBA[] = [
+    new ColorRGBA(70, 130, 200, 1, "Blue"),
+    new ColorRGBA(200, 70, 70, 1, "Red"),
+    new ColorRGBA(200, 200, 70, 1, "Yellow"),
+    new ColorRGBA(70, 200, 1, 1, "Green"),
+    new ColorRGBA(180, 0, 180, 1, "Magenta")
+  ];
+
   private dataCount: number = 90;
 
   private svg;
-  private margin: number = 50;
-  private width: number = 800 - (this.margin * 2);
-  private height: number = 300 - (this.margin * 2);
-
-  public curveLines: boolean = true;
-
-  // All supported crytocurrencies with their default display values
-  public coins: Coin[] = [];
-
+  private marginWidth: number = 60;
+  private marginHeight: number = 50;
+  private width: number = 800 - (this.marginWidth * 2);
+  private height: number = 500 - (this.marginHeight * 2);
+  public linesSmooth: boolean = true;
+    
   constructor(private httpService : HttpService) {
     this.coins = Coin.GetAllCoins();
     this.selectedCurrencyId = this.coins[0];
+    this.selectedCurrencyStandardId = "GBP";
+    this.currentChartColor = this.colors[0];
   }
 
   ngOnInit(): void {
@@ -40,12 +59,12 @@ export class ChartComponent implements OnInit {
     d3.select("svg").remove();
 
     this.svg = d3
-    .select("figure#bar")
+    .select("figure#chart")
     .append("svg")
-    .attr("width", this.width + (this.margin * 2))
-    .attr("height", this.height + (this.margin * 2))
+    .attr("width", this.width + (this.marginWidth * 2))
+    .attr("height", this.height + (this.marginHeight * 2))
     .append("g")
-    .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
+    .attr("transform", "translate(" + this.marginWidth + "," + this.marginHeight + ")");
   }
 
   private updatePlot(): void {
@@ -67,7 +86,8 @@ export class ChartComponent implements OnInit {
     // Create the Y-axis band scale
     const y = d3
     .scaleLinear()
-    .domain([0, d3.max(data, d => d.average()) as number])
+    //.domain([0, d3.max(data, d => d.average()) as number])
+    .domain([0, d3.max(data, d => d.high) as number])
     .range([this.height, 0]);
 
     // Draw the X-axis to the DOM
@@ -92,27 +112,29 @@ export class ChartComponent implements OnInit {
     const points: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.average())]
     );
-    this.drawLine(points, 2.5, "rgba(70, 130, 180, 1)");
+    this.drawLine(points, 2.5, 1.0);
     
     const pointsHighs: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.high)]
     );
-    this.drawLine(pointsHighs, 1.5, "rgba(70, 130, 180, 0.7)");
+    this.drawLine(pointsHighs, 1.5, 0.7);
 
     const pointsLows: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.low)]
     );
-    this.drawLine(pointsLows, 1.5, "rgba(70, 130, 180, 0.7)");  
+    this.drawLine(pointsLows, 1.5, 0.7);  
 
     // Draw the area
     const pointsArea: [number, number][] = pointsHighs.concat(pointsLows.reverse());
-    this.drawArea(pointsArea, "rgba(70, 130, 180, 0.2)");
+    this.drawArea(pointsArea, 0.2);
 
     // Draw the dots
-    //this.drawDots(x, y, data, "rgba(70, 130, 180, 0.2)");
+    //this.drawDots(x, y, data, 1);
   }
 
-  private drawLine(points: [number, number][], width: Number, color: string): void {
+  private drawLine(points: [number, number][], width: Number, alpha: number): void {
+    let color: ColorRGBA = new ColorRGBA(this.currentChartColor.r, this.currentChartColor.g, this.currentChartColor.b, alpha, this.currentChartColor.descriptor);
+
     this.svg
       .append("g")
       .append("path")
@@ -121,14 +143,16 @@ export class ChartComponent implements OnInit {
       .style("stroke", color)
       .style("stroke-width", width)
       .attr("d", d3.line()
-        .curve(this.curveLines ? d3.curveBasis : d3.curveLinear)
+        .curve(this.linesSmooth ? d3.curveBasis : d3.curveLinear)
         .x(d => d[0])
         .y(d => d[1])(points));
   }
 
-  private drawArea(points: [number, number][], color: string) {
+  private drawArea(points: [number, number][], alpha: number) {
+    let color: ColorRGBA = new ColorRGBA(this.currentChartColor.r, this.currentChartColor.g, this.currentChartColor.b, alpha, this.currentChartColor.descriptor);
+    
     var areaFunction = d3.area()
-    .curve(this.curveLines ? d3.curveBasis : d3.curveLinear)
+    .curve(this.linesSmooth ? d3.curveBasis : d3.curveLinear)
     .x(d => d[0])
     .y1(d => d[1])
     .y0(0);
@@ -139,7 +163,9 @@ export class ChartComponent implements OnInit {
       .attr("d", areaFunction(points));  
   }
 
-  private drawDots(x, y, data: CryptoData[], color: string) {
+  private drawDots(x, y, data: CryptoData[], alpha: number) {
+    let color: ColorRGBA = new ColorRGBA(this.currentChartColor.r, this.currentChartColor.g, this.currentChartColor.b, alpha, this.currentChartColor.descriptor);
+    
     this.svg.append("g")
     .selectAll("dot")
     .data(data)
@@ -147,10 +173,15 @@ export class ChartComponent implements OnInit {
     .append("circle")
     .attr("cx", d => x(d.time))
     .attr("cy", d => y(d.average()))
+    .style("fill", color)
     .classed("chart-point", true);
   }
 
   public onSelectCoin(coinId: any) {
+    if(coinId == this.selectedCurrencyId.id) {
+      return;
+    }
+
     this.coins.forEach(coin => {
       if(coinId == coin.id) {
         coin.active = !coin.active;
@@ -165,9 +196,23 @@ export class ChartComponent implements OnInit {
     this.updatePlot();
   }
 
-  public onCurveTypeToggle(): void {
-    this.curveLines = !this.curveLines;
-    console.log(this.curveLines);
+  public onSelectStandard(coinStandard: any) {
+    this.selectedCurrencyStandardId = coinStandard;
+
+    this.createSvg();
+    this.updatePlot();
+  }
+
+  public onSelectColor(color: any) {
+    this.currentChartColor = color;
+
+    this.createSvg();
+    this.updatePlot();
+  }
+
+  public onSmoothLinesToggle() {
+    this.linesSmooth = !this.linesSmooth;
+    console.log(this.linesSmooth);
 
     this.createSvg();
     this.updatePlot();
