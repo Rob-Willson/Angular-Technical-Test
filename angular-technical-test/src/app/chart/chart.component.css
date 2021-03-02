@@ -15,19 +15,21 @@
   width: 56px;
 }
 
+.chart-button-container button:not(.chart-button-selected) {
+  margin: 2px 2px 2px 2px;
+}
+
 .chart-button-container button:not(.chart-button-selected):hover {
   box-shadow: 0 0 2px 4px rgba(80, 125, 95, 0.8);
   background-color: rgba(60, 180, 140, 0.025);
 }
 
 .chart-button-container button:not(.chart-button-selected):active {
-  transform: translateY(1px);
   box-shadow: 0 0 2px 4px rgba(80, 125, 95, 0.8);
   background-color: rgba(60, 180, 140, 0.1);
 }
 
 .chart-button-selected {
-  transform: translateY(-2px);
   height: 54px;
   background-color: rgba(60, 180, 140, 1);
   color: black;
@@ -38,6 +40,5 @@
 }
 
 .chart-button-selected:active {
-  transform: translateY(-1px);
   background-color: rgba(60, 180, 140, 0.5);
 }
