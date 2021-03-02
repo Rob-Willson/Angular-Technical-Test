@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { HttpService } from "../core/http.service";
 import { CryptoData } from "../core/data.template";
-import { Coin, CoinType } from "../core/coin.template";
+import { Coin } from "../core/coin.template";
 import * as d3 from "d3";
 
 @Component({
@@ -19,6 +19,8 @@ export class ChartComponent implements OnInit {
   private margin: number = 50;
   private width: number = 800 - (this.margin * 2);
   private height: number = 300 - (this.margin * 2);
+
+  public curveLines: boolean = true;
 
   // All supported crytocurrencies with their default display values
   public coins: Coin[] = [];
@@ -90,17 +92,17 @@ export class ChartComponent implements OnInit {
     const points: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.average())]
     );
-    this.drawLine(x, y, points, 2.5, "rgba(70, 130, 180, 1)");
+    this.drawLine(points, 2.5, "rgba(70, 130, 180, 1)");
     
     const pointsHighs: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.high)]
     );
-    this.drawLine(x, y, pointsHighs, 1.5, "rgba(70, 130, 180, 0.7)");
+    this.drawLine(pointsHighs, 1.5, "rgba(70, 130, 180, 0.7)");
 
     const pointsLows: [number, number][] = data.map(
       d => [x(new Date(d.time)), y(d.low)]
     );
-    this.drawLine(x, y, pointsLows, 1.5, "rgba(70, 130, 180, 0.7)");  
+    this.drawLine(pointsLows, 1.5, "rgba(70, 130, 180, 0.7)");  
 
     // Draw the area
     const pointsArea: [number, number][] = pointsHighs.concat(pointsLows.reverse());
@@ -110,7 +112,7 @@ export class ChartComponent implements OnInit {
     //this.drawDots(x, y, data, "rgba(70, 130, 180, 0.2)");
   }
 
-  private drawLine(x, y, points: [number, number][], width: Number, color: string): void {
+  private drawLine(points: [number, number][], width: Number, color: string): void {
     this.svg
       .append("g")
       .append("path")
@@ -119,14 +121,14 @@ export class ChartComponent implements OnInit {
       .style("stroke", color)
       .style("stroke-width", width)
       .attr("d", d3.line()
-        .curve(d3.curveBasis)
+        .curve(this.curveLines ? d3.curveBasis : d3.curveLinear)
         .x(d => d[0])
         .y(d => d[1])(points));
   }
 
   private drawArea(points: [number, number][], color: string) {
     var areaFunction = d3.area()
-    .curve(d3.curveBasis)
+    .curve(this.curveLines ? d3.curveBasis : d3.curveLinear)
     .x(d => d[0])
     .y1(d => d[1])
     .y0(0);
@@ -148,9 +150,7 @@ export class ChartComponent implements OnInit {
     .classed("chart-point", true);
   }
 
-  onSelectCoin(coinId: any) {
-    console.log("onSelectCoin(" + coinId + ") CALLED");
-
+  public onSelectCoin(coinId: any) {
     this.coins.forEach(coin => {
       if(coinId == coin.id) {
         coin.active = !coin.active;
@@ -160,6 +160,14 @@ export class ChartComponent implements OnInit {
         coin.active = false;
       }
     });
+
+    this.createSvg();
+    this.updatePlot();
+  }
+
+  public onCurveTypeToggle(): void {
+    this.curveLines = !this.curveLines;
+    console.log(this.curveLines);
 
     this.createSvg();
     this.updatePlot();

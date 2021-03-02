@@ -7,5 +7,11 @@
 <div class="chart-button-container">
   <button class="chart-button" tabindex="0" *ngFor="let coin of this.coins" (click)="onSelectCoin(coin.id)" [class.chart-button-selected]="coin.active == true">
     <span>{{ coin.id }}</span>
-  </button>  
+  </button>
+</div>
+
+<div class="chart-button-container">
+  <button class="chart-button" tabindex="0" (click)="onCurveTypeToggle()" [class.chart-button-selected]="curveLines == true">
+    <span>Smooth lines</span>
+  </button>
 </div>
