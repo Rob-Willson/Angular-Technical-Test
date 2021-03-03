@@ -132,7 +132,7 @@ export class ChartComponent implements OnInit {
       .attr("x", this.width / 2 )
       .attr("y", this.height + 40)
       .style("text-anchor", "middle")
-      .text("Date (from " + d3.min(data, d => d.dateFromTimestamp().toDateString() + " to " + d3.max(data, d => d.dateFromTimestamp().toDateString()) + ")"));
+      .text("Date (from " + d3.min(data, d => d.dateFromTimestamp())?.toDateString() + " to " + d3.max(data, d => d.dateFromTimestamp())?.toDateString() + ")");
 
     // Draw the Y-axis to the DOM
     this.svg
