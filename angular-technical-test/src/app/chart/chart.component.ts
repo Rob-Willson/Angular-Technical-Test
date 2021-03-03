@@ -52,15 +52,13 @@ export class ChartComponent implements OnInit {
     new ColorRGBA(180, 0, 180, 1, "Magenta")
   ];
 
-  public linesSmooth: boolean = true;
-
   private dataCache: CryptoData[] = [];
   private svg;
-
   private marginWidth: number = 100;
   private marginHeight: number = 50;
   private width: number = 900 - (this.marginWidth * 2);
   private height: number = 600 - (this.marginHeight * 2);
+  public curveType: d3.CurveFactory = d3.curveBasis;
 
   constructor(private httpService : HttpService) {
     this.selectedCurrency = this.currencies[0];
@@ -188,7 +186,7 @@ export class ChartComponent implements OnInit {
       .style("stroke", color)
       .style("stroke-width", width)
       .attr("d", d3.line()
-        .curve(this.linesSmooth ? d3.curveBasis : d3.curveLinear)
+        .curve(this.curveType)
         .x(d => d[0])
         .y(d => d[1])(points));
   }
@@ -198,7 +196,7 @@ export class ChartComponent implements OnInit {
     
     let areaFunction = d3
       .area()
-      .curve(this.linesSmooth ? d3.curveBasis : d3.curveLinear)
+      .curve(this.curveType)
       .x(d => d[0])
       .y1(d => d[1])
       .y0(0);
@@ -258,12 +256,6 @@ export class ChartComponent implements OnInit {
 
   public onSelectColor(color: any) {
     this.selectedChartColor = color;
-    this.updatePlot(false);
-  }
-
-  public onSmoothLinesToggle() {
-    this.linesSmooth = !this.linesSmooth;
-    console.log(this.linesSmooth);
     this.updatePlot(false);
   }
   
