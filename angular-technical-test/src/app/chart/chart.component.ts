@@ -132,7 +132,7 @@ export class ChartComponent implements OnInit {
       .attr("x", this.width / 2 )
       .attr("y", this.height + 40)
       .style("text-anchor", "middle")
-      .text("Date (from " + d3.min(data, d => d.dateFromTimestamp().toLocaleDateString() + " to " + d3.max(data, d => d.dateFromTimestamp().toLocaleDateString()) + ")"));
+      .text("Date (from " + d3.min(data, d => d.dateFromTimestamp().toDateString() + " to " + d3.max(data, d => d.dateFromTimestamp().toDateString()) + ")"));
 
     // Draw the Y-axis to the DOM
     this.svg
@@ -210,16 +210,16 @@ export class ChartComponent implements OnInit {
   private drawScrubber(data: CryptoData[]) {
     let splitWidth: number = this.width / this.selectedTimeframe;
 
-    for(let i = 0; i < data.length; i++) {
+    for(let i = 1; i < data.length; i++) {
       let svg = this.svg
         .append("g")
         .classed("chart-point", true); 
       
       svg
         .append("rect")
-        .attr("x", splitWidth * i)
+        .attr("x", splitWidth * (i - 1))
         .attr("y", 0)
-        .attr("width", this.width / this.selectedTimeframe + 3)
+        .attr("width", this.width / this.selectedTimeframe + 2)
         .attr("height", this.height)
         .style("fill", "white");
       
