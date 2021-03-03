@@ -54,7 +54,7 @@ export class ChartComponent implements OnInit {
 
   private dataCache: CryptoData[] = [];
   private svg;
-  private marginWidth: number = 100;
+  private marginWidth: number = 80;
   private marginHeight: number = 50;
   private width: number = 900 - (this.marginWidth * 2);
   private height: number = 500 - (this.marginHeight * 2);
@@ -122,7 +122,7 @@ export class ChartComponent implements OnInit {
       .attr("transform", "translate(0," + this.height + ")")
       .call(d3.axisBottom(x))
       .selectAll("text")
-      .attr("transform", "translate(5,0)")
+      .attr("transform", "translate(10,0)")
       .style("text-anchor", "end");
 
     // X-axis label
@@ -142,9 +142,9 @@ export class ChartComponent implements OnInit {
     // Y-axis label
     this.svg.append("text")
       .style("fill", "rgb(210, 210, 210)")
-      .attr("transform", "translate(-1)rotate(-90)")
+      .attr("transform", "rotate(-90)")
       .attr("x", (-this.height / 2) - this.marginHeight)
-      .attr("y", -50)
+      .attr("y", -64)
       .text("Value (" + this.selectedCurrencyStandard + ")");
 
     this.plotData(x, y, data);
