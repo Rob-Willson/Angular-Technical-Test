@@ -66,28 +66,9 @@ button {
   cursor: pointer;
 }
 
-.toolbar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  margin-bottom: 100px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  background-color: rgb(22, 20, 19);
-  color: rgb(60, 180, 140);
-  font-weight: 600;
-  border-bottom: solid 1px rgb(15, 15, 15);
-}
-
-.toolbar img {
-  margin: 0 16px;
-}
-
 .content {
   display: flex;
-  margin: 64px auto 32px;
+  margin: 0px auto 32px;
   padding: 0 16px;
   max-width: 1600px;
   flex-direction: column;
