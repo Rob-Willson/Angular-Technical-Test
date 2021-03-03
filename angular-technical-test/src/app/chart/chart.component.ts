@@ -57,7 +57,7 @@ export class ChartComponent implements OnInit {
   private marginWidth: number = 100;
   private marginHeight: number = 50;
   private width: number = 900 - (this.marginWidth * 2);
-  private height: number = 600 - (this.marginHeight * 2);
+  private height: number = 500 - (this.marginHeight * 2);
   public curveType: d3.CurveFactory = d3.curveBasis;
 
   constructor(private httpService : HttpService) {
@@ -69,19 +69,6 @@ export class ChartComponent implements OnInit {
 
   ngOnInit(): void {
     this.updatePlot(true);
-  }
-
-  private createSvg(): void {
-    // Clean up any existing chart
-    d3.select("svg").remove();
-
-    this.svg = d3
-      .select("figure#chart")
-      .append("svg")
-      .attr("width", this.width + (this.marginWidth * 2))
-      .attr("height", this.height + (this.marginHeight * 2))
-      .append("g")
-      .attr("transform", "translate(" + this.marginWidth + "," + this.marginHeight + ")");
   }
 
   private updatePlot(requiresNewApiRequest: boolean): void {
@@ -101,7 +88,20 @@ export class ChartComponent implements OnInit {
       this.drawPlot(this.dataCache);
     }
   }
-  
+
+  private createSvg(): void {
+    // Clean up any existing chart
+    d3.select("svg").remove();
+
+    this.svg = d3
+      .select("figure#chart")
+      .append("svg")
+      .attr("width", this.width + (this.marginWidth * 2))
+      .attr("height", this.height + (this.marginHeight * 2))
+      .append("g")
+      .attr("transform", "translate(" + this.marginWidth + "," + this.marginHeight + ")");
+  }
+    
   private drawPlot(data: CryptoData[]): void {
     // Create the X-axis band scale
     // Multiply time number by 1000, because JS Date class uses milliseconds, instead of seconds
