@@ -74,16 +74,12 @@ export class ChartComponent implements OnInit {
   private updatePlot(requiresNewApiRequest: boolean): void {
     if(requiresNewApiRequest) {
       this.httpService.getRequestCryptocompareHistoric(this.selectedCurrency, this.selectedCurrencyStandard, this.selectedTimeframe).subscribe((data) => {
-        console.log("RAW DATA: ");
-        console.log(data);
         this.dataCache = CryptoData.parseFromJSON(data);
         this.createSvg();
         this.drawPlot(this.dataCache);
       });
     }
     else {
-      console.log("REFRESHING WITH CACHED DATA: ");
-      console.log(this.dataCache);
       this.createSvg();
       this.drawPlot(this.dataCache);
     }
@@ -171,7 +167,7 @@ export class ChartComponent implements OnInit {
     const pointsArea: [number, number][] = pointsHighs.concat(pointsLows.reverse());
     this.drawArea(pointsArea, 0.2);
 
-    // Draw the dots
+    // Draw the 'scrubber' components
     this.drawScrubber(data);
   }
 

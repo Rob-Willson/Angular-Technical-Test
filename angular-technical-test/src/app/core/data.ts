@@ -47,6 +47,7 @@ export class CryptoData {
     return new Date(this.timeInMillis());
   }
 
+  // TypeScript dates use milliseconds, but the Crytopcompare API returns dates as seconds
   public timeInMillis(): number {
     return this.time * 1000;
   }

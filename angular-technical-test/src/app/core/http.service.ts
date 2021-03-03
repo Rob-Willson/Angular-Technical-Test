@@ -23,7 +23,6 @@ export class HttpService {
       url += "&api_key=" + apiKey;
     }
     
-    console.log("ENDPOINT: " + url);
     return this.getRequestObservable(url);
   }
 
