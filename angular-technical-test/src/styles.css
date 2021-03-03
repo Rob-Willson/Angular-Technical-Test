@@ -89,7 +89,7 @@ button {
   display: flex;
   margin: 64px auto 32px;
   padding: 0 16px;
-  max-width: 1080px;
+  max-width: 1600px;
   flex-direction: column;
   align-items: center;
 }
@@ -109,12 +109,9 @@ button {
 /* d3 only seems to support referencing the base styles file (ignoring component styles), so we have to put this here
 Could use /deep/ et al., but that's depreciated and it's future browser support is looking patchy */
 .chart-point {
-  r: 15px;
   fill-opacity: 0;
-  transition: all 0.2s ease-in-out;
 }
 .chart-point:hover {
-  r: 16px;
-  fill-opacity: 0.5;
-  transition: all 0.2s ease-in-out;
+  fill-opacity: 0.3;
+  padding: 0 10px 0 10px;
 }
