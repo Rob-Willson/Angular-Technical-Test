@@ -37,7 +37,6 @@ export class CryptoDataRawSummaryData {
 // Processed data object ready for use
 export class CryptoData {
   private constructor(
-    public readonly currency: string,
     private readonly time: number,
     public readonly high: number,
     public readonly low: number
@@ -62,7 +61,6 @@ export class CryptoData {
 
     for (let i = 0; i < dataRaw.Data.Data.length; i++) {
       cryptoDataProcessed.push(new CryptoData(
-        "currencyId" + i,
         dataRaw.Data.Data[i].time,
         dataRaw.Data.Data[i].high,
         dataRaw.Data.Data[i].low

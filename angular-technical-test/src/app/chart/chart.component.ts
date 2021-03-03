@@ -54,7 +54,9 @@ export class ChartComponent implements OnInit {
 
   public linesSmooth: boolean = true;
 
+  private dataCache: CryptoData[] = [];
   private svg;
+
   private marginWidth: number = 100;
   private marginHeight: number = 50;
   private width: number = 900 - (this.marginWidth * 2);
@@ -68,7 +70,7 @@ export class ChartComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.updatePlot();
+    this.updatePlot(true);
   }
 
   private createSvg(): void {
@@ -84,14 +86,22 @@ export class ChartComponent implements OnInit {
       .attr("transform", "translate(" + this.marginWidth + "," + this.marginHeight + ")");
   }
 
-  private updatePlot(): void {
-    this.httpService.getRequestCryptocompareHistoric(this.selectedCurrency, this.selectedCurrencyStandard, this.selectedTimeframe).subscribe((data) => {
-      console.log("RAW DATA: ");
-      console.log(data);
-      let dataProcessedFromObservable = CryptoData.parseFromJSON(data);
+  private updatePlot(requiresNewApiRequest: boolean): void {
+    if(requiresNewApiRequest) {
+      this.httpService.getRequestCryptocompareHistoric(this.selectedCurrency, this.selectedCurrencyStandard, this.selectedTimeframe).subscribe((data) => {
+        console.log("RAW DATA: ");
+        console.log(data);
+        this.dataCache = CryptoData.parseFromJSON(data);
+        this.createSvg();
+        this.drawPlot(this.dataCache);
+      });
+    }
+    else {
+      console.log("REFRESHING WITH CACHED DATA: ");
+      console.log(this.dataCache);
       this.createSvg();
-      this.drawPlot(dataProcessedFromObservable);
-    });
+      this.drawPlot(this.dataCache);
+    }
   }
   
   private drawPlot(data: CryptoData[]): void {
@@ -107,8 +117,6 @@ export class ChartComponent implements OnInit {
       .scaleLinear()
       .domain([0, d3.max(data, d => d.high) as number])
       .range([this.height, 0]);
-
-    //let xAxisTimeFormat = d3.timeFormat("%Y-%m-%d");
     
     // Draw the X-axis to the DOM
     this.svg
@@ -235,33 +243,28 @@ export class ChartComponent implements OnInit {
 
   public onSelectCurrency(currency: any) {
     this.selectedCurrency = currency;
-
-    this.updatePlot();
+    this.updatePlot(true);
   }
 
   public onSelectCurrencyStandard(coinStandard: any) {
     this.selectedCurrencyStandard = coinStandard;
-
-    this.updatePlot();
+    this.updatePlot(true);
   }
 
   public onSelectTimeframe(timeframe: any) {
     this.selectedTimeframe = timeframe;
-
-    this.updatePlot();
+    this.updatePlot(true);
   }
 
   public onSelectColor(color: any) {
     this.selectedChartColor = color;
-
-    this.updatePlot();
+    this.updatePlot(false);
   }
 
   public onSmoothLinesToggle() {
     this.linesSmooth = !this.linesSmooth;
     console.log(this.linesSmooth);
-
-    this.updatePlot();
+    this.updatePlot(false);
   }
   
 }
