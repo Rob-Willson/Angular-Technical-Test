@@ -38,14 +38,18 @@ export class CryptoDataRawSummaryData {
 export class CryptoData {
   private constructor(
     public readonly currency: string,
-    public readonly time: number,
+    private readonly time: number,
     public readonly high: number,
     public readonly low: number
   )
   {}
 
   public dateFromTimestamp (): Date {
-    return new Date(this.time);
+    return new Date(this.timeInMillis());
+  }
+
+  public timeInMillis(): number {
+    return this.time * 1000;
   }
 
   public average (): number {
