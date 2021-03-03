@@ -9,18 +9,18 @@ export class HttpService {
 
   constructor(private httpClient : HttpClient) {}
 
-  public getRequestCryptocompareHistoric(urlCurrencyId: string, urlCurrencyStandardId: string, urlCount: number) : Observable<any> {
+  public getRequestCryptocompareHistoric(currencyId: string, currencyStandardId: string, timeframe: number) : Observable<any> {
     let urlBase: string = "https://min-api.cryptocompare.com/data/v2/histoday";
     let apiKey: string = "";  // Not for github's eyes
 
     // Build the endpoint url
     let url : string = urlBase + "?";
     // Request requires a querying currency (fsym) and a standard (tsym) to compare it with
-    url += "fsym=" + urlCurrencyId + "&";
-    url += "tsym=" + urlCurrencyStandardId;
-    url += "&limit=" + (urlCount);
+    url += "fsym=" + currencyId + "&";
+    url += "tsym=" + currencyStandardId;
+    url += "&limit=" + (timeframe);
     if(apiKey) {
-      url += "&api_key=" + "apiKey";
+      url += "&api_key=" + apiKey;
     }
     
     console.log("ENDPOINT: " + url);
