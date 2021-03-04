@@ -48,7 +48,6 @@ export class ChartComponent implements OnInit {
     new ColorRGBA(70, 130, 200, 1, "Blue"),
     new ColorRGBA(200, 70, 70, 1, "Red"),
     new ColorRGBA(200, 200, 70, 1, "Yellow"),
-    new ColorRGBA(70, 200, 1, 1, "Green"),
     new ColorRGBA(180, 0, 180, 1, "Magenta")
   ];
 
@@ -175,7 +174,6 @@ export class ChartComponent implements OnInit {
     let color: ColorRGBA = new ColorRGBA(this.selectedChartColor.r, this.selectedChartColor.g, this.selectedChartColor.b, alpha, this.selectedChartColor.descriptor);
 
     this.svg
-      .append("g")
       .append("path")
       .attr("id", "line")
       .style("fill", "none")
@@ -217,8 +215,17 @@ export class ChartComponent implements OnInit {
         .attr("y", 0)
         .attr("width", this.width / this.selectedTimeframe + 2)
         .attr("height", this.height)
+        .style("opacity", 0)
         .style("fill", "white");
-      
+
+      svg
+        .append("rect")
+        .attr("x", splitWidth * (i - 1) + this.width / this.selectedTimeframe / 2)
+        .attr("y", 0)
+        .attr("width", 2)
+        .attr("height", this.height)
+        .style("fill", "white");
+
       svg
         .append("text")
         .text(data[i].dateFromTimestamp().toDateString())
