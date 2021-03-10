@@ -1,0 +1,41 @@
+.chart-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: left;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.chart-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 56px;
+}
+
+.chart-button-container {
+  button:not(.chart-button-selected) {
+    margin: 2px 2px 2px 2px;
+    &:hover {
+      box-shadow: 0 0 2px 4px rgba(80, 125, 95, 0.8);
+      background-color: rgba(60, 180, 140, 0.025);
+    }
+    &:active {
+      background-color: rgba(60, 180, 140, 0.1);
+    }
+  }
+}
+
+.chart-button-selected {
+  height: 54px;
+  background-color: rgba(60, 180, 140, 1);
+  color: black;
+  &:hover {
+    background-color: rgba(60, 180, 140, 0.7);
+  }
+  &:active {
+    background-color: rgba(60, 180, 140, 0.5);
+  }
+}

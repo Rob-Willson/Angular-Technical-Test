@@ -8,7 +8,7 @@ import * as d3 from "d3";
 @Component({
   selector: "app-chart",
   templateUrl: "./chart.component.html",
-  styleUrls: ["./chart.component.css"]
+  styleUrls: ["./chart.component.scss"]
 })
 
 export class ChartComponent implements OnInit {

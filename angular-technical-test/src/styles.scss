@@ -1,3 +1,5 @@
+@import "./styles.palette";
+
 html {
     min-height: 100%;
     -webkit-background-size: cover;
@@ -5,7 +7,7 @@ html {
     -o-background-size: cover;
     background-size: cover;
     background-repeat: no-repeat;
-    background-color: rgb(15, 15, 16);
+    background-color: $almostBlackColor;
 }
 
 h2 {
@@ -20,38 +22,23 @@ h3 {
 
 p {
   margin: 0;
-  color: rgb(60, 180, 140);
+  color: $greenColor;
 }
 
 ol {
 	margin: 0px;
 	padding: 0px;
-  color: rgb(60, 180, 140);
+  color: $greenColor;
 	counter-reset: item;
-}
-ol li {
-	margin: 0px;
-	padding: 0px;
-	list-style-type: none;
-	counter-increment: item;
-}
-ol li:before {
-	margin: 0px;
-	padding: 0px;
-  color: rgb(85, 215, 170);
-	content:counter(item) ". ";
-	font-weight: bold;
-}
-
-a,
-a:visited,
-a:hover {
-  color: #acacac;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #cccdcf;
+  li {
+    list-style-type: none;
+    counter-increment: item;
+    &:before {
+      color: $greenColorHighlighted;
+      content:counter(item) ". ";
+      font-weight: bold;
+    }
+  }
 }
 
 button {
@@ -88,11 +75,11 @@ button {
 }
 
 /* d3 only seems to support referencing the base styles file (ignoring component styles), so we have to put this here
-Could use /deep/ et al., but that's depreciated and it's future browser support is looking patchy */
+Could use /deep/ et al., but that's depreciated and future browser support is looking patchy */
 .chart-point {
   fill-opacity: 0;
-}
-.chart-point:hover {
-  fill-opacity: 0.3;
-  padding: 0 10px 0 10px;
+  &:hover {
+    fill-opacity: 0.3;
+    padding: 0 10px 0 10px;
+  }
 }
